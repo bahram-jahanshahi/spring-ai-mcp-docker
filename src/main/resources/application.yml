@@ -7,7 +7,7 @@ spring:
       api-key: ${SPRING_AI_OPEN_AI_API_KEY}
       chat:
         options:
-          model: gpt-4o
+          model: gpt-4o-mini
           temperature: 0.2
 
     mcp:
