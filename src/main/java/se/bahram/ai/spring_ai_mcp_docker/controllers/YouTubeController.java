@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/summarize")
-public class SummarizeController {
+@RequestMapping("/youtube")
+public class YouTubeController {
     private final ChatClient chat;
 
-    public SummarizeController(ChatClient chat) { this.chat = chat; }
+    public YouTubeController(ChatClient chat) { this.chat = chat; }
 
     // Example: GET /summarize?url=https://www.youtube.com/watch?v=JdT78t1Offo
-    @GetMapping
+    @GetMapping("/summarize")
     public String summarize(@RequestParam String url) {
         var system = """
         You are a concise assistant. When a YouTube URL is provided, call the MCP tool `get_transcript`
@@ -26,6 +26,31 @@ public class SummarizeController {
         """;
 
         var user = "Please summarize the video at this URL: " + url;
+
+        return chat.prompt()
+                .system(system)
+                .user(user)
+                .call()
+                .content();
+    }
+
+    @GetMapping("/info")
+    public String info(@RequestParam String url) {
+        var system = """
+        You are a concise assistant. When a YouTube URL is provided, call the MCP tool `get_video_info`
+        (from the Docker MCP Gateway) with the exact `url` argument. Then produce:
+        - the video title,
+        - the channel name,
+        - the publish date,
+        - the view count,
+        - the like count (if available),
+        - the description (if available).
+        - the chapters (if available).
+        return format as mark down.
+        If video info retrieval fails or is unavailable, say so briefly.
+        """;
+
+        var user = "Please get the video info at this URL: " + url;
 
         return chat.prompt()
                 .system(system)
