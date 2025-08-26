@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: spring-ai-mcp-docker
+
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: gpt-4o
+          temperature: 0.2
+
+    mcp:
+      client:
+        enabled: true
+        initialized: true
+        stdio:
+          connections:
+            docker-gateway:
+              command: docker
+              args: [ "mcp", "gateway", "run" ]
+              # The gateway proxies *all enabled servers* in the Toolkit.
+              # Spring AI will discover their tools automatically.
+server:
+  port: 8080
+
